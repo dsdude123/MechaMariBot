@@ -19,7 +19,8 @@ namespace MechaMariBot
         EventLog eventLog;
         DiscordSocketClient client;
         String[] triggerWords = { "cowboy", "cowboys" };
-        ulong[] triggerIds = { 388872773109284876, 607723716977098753, 234840886519791616 };
+        ulong[] triggerIds = { 388872773109284876, 607723716977098753};
+        ulong testServer = 410597263363276801;
 
         public MechaMariBot()
         {
@@ -46,7 +47,7 @@ namespace MechaMariBot
             try
             {
                 client = new DiscordSocketClient();
-                Dictionary<String, String> configuration = JsonConvert.DeserializeObject<Dictionary<String, String>>(File.ReadAllText("config.json"));
+                Dictionary<String, String> configuration = JsonConvert.DeserializeObject<Dictionary<String, String>>(File.ReadAllText("C:\\MechaMariBot\\config.json"));
                 client.Log += Log;
                 client.MessageReceived += MessageReceived;
                 await client.LoginAsync(TokenType.Bot, configuration["token"]);
@@ -64,7 +65,9 @@ namespace MechaMariBot
 
         private async Task MessageReceived(SocketMessage socketMessage)
         {
-            if (triggerIds.Contains(socketMessage.Author.Id))
+            var socketGuildChannel = (SocketGuildChannel)socketMessage.Channel;
+            bool isTestServer = socketGuildChannel.Guild.Id == testServer;
+            if (triggerIds.Contains(socketMessage.Author.Id) || isTestServer)
             {
                 string[] words = socketMessage.Content.ToLower().Split(' ');
                 if (words.Intersect(triggerWords).Count() > 0)
