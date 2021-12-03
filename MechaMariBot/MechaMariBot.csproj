@@ -127,6 +127,7 @@
     <Compile Include="MechaMariBot.Designer.cs">
       <DependentUpon>MechaMariBot.cs</DependentUpon>
     </Compile>
+    <Compile Include="Models\ReactionTrigger.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="ProjectInstaller.cs">
       <SubType>Component</SubType>

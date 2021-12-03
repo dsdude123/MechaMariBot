@@ -1,5 +1,6 @@
 ﻿using Discord;
 using Discord.WebSocket;
+using MechaMariBot.Models;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -18,17 +19,15 @@ namespace MechaMariBot
     {
         EventLog eventLog;
         DiscordSocketClient client;
-        /*
-         * TODO:
-         * Dak, zeke, lamb, diggs, parsons, ring are other keywords
-         * 
-         * Reply with emote as well
-         * 
-         * combat skyrim? <:thunk:764195150045511720>
-         */
-        String[] triggerWords = { "cowboy", "cowboys" };
-        ulong[] triggerIds = { 388872773109284876, 607723716977098753};
+
         ulong testServer = 410597263363276801;
+        // TODO: Fix not triggering if there is punctuation at the end
+        ReactionTrigger[] triggers =
+        {
+            new ReactionTrigger(new string[]{ "cowboy", "cowboys", "dak", "zeke", "lamb", "diggs", "parsons", "ring" },
+                new ulong[]{ 388872773109284876, 607723716977098753}, "<:cowboypium:885917545738174505>"),
+            new ReactionTrigger(new string[]{"skyrim"}, new ulong[]{316822516889026560}, "<:thunk:764195150045511720>")
+        };
 
         public MechaMariBot()
         {
@@ -75,15 +74,19 @@ namespace MechaMariBot
         {
             var socketGuildChannel = (SocketGuildChannel)socketMessage.Channel;
             bool isTestServer = socketGuildChannel.Guild.Id == testServer;
-            if (triggerIds.Contains(socketMessage.Author.Id) || isTestServer)
+            foreach (ReactionTrigger trigger in triggers)
             {
-                string[] words = socketMessage.Content.ToLower().Split(' ');
-                if (words.Intersect(triggerWords).Count() > 0)
+                if (trigger.triggerUsers.Contains(socketMessage.Author.Id) || isTestServer)
                 {
-                    var emote = Emote.Parse("<:cowboypium:885917545738174505>");
-                    await socketMessage.AddReactionAsync(emote);
+                    string[] words = socketMessage.Content.ToLower().Split(' ');
+                    if (words.Intersect(trigger.triggerWords).Count() > 0)
+                    {
+                        var emote = Emote.Parse(trigger.reactionEmote);
+                        await socketMessage.AddReactionAsync(emote);
+                    }
                 }
             }
+            
         }
 
         private Task Log(LogMessage msg)
