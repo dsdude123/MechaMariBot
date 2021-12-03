@@ -18,6 +18,14 @@ namespace MechaMariBot
     {
         EventLog eventLog;
         DiscordSocketClient client;
+        /*
+         * TODO:
+         * Dak, zeke, lamb, diggs, parsons, ring are other keywords
+         * 
+         * Reply with emote as well
+         * 
+         * combat skyrim? <:thunk:764195150045511720>
+         */
         String[] triggerWords = { "cowboy", "cowboys" };
         ulong[] triggerIds = { 388872773109284876, 607723716977098753};
         ulong testServer = 410597263363276801;
@@ -72,7 +80,7 @@ namespace MechaMariBot
                 string[] words = socketMessage.Content.ToLower().Split(' ');
                 if (words.Intersect(triggerWords).Count() > 0)
                 {
-                    var emote = Emote.Parse("<:cowboypium:915827472292003860>");
+                    var emote = Emote.Parse("<:cowboypium:885917545738174505>");
                     await socketMessage.AddReactionAsync(emote);
                 }
             }
