@@ -11,6 +11,7 @@ using System.IO;
 using System.Linq;
 using System.ServiceProcess;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace MechaMariBot
@@ -24,10 +25,11 @@ namespace MechaMariBot
         // TODO: Fix not triggering if there is punctuation at the end
         ReactionTrigger[] triggers =
         {
-            new ReactionTrigger(new string[]{ "cowboy", "cowboys", "dak", "zeke", "lamb", "diggs", "parsons", "ring" },
+            new ReactionTrigger(new string[]{ "cowboy", "cowboys", "dak", "zeke", "lamb", "diggs", "parsons", "ring", "dallas", "amari" },
                 new ulong[]{ 388872773109284876, 607723716977098753}, "<:cowboypium:885917545738174505>"),
             new ReactionTrigger(new string[]{"skyrim"}, new ulong[]{316822516889026560}, "<:thunk:764195150045511720>")
         };
+        Regex keepOnlyAlphaNum = new Regex("[^a-zA-Z0-9 -]");
 
         public MechaMariBot()
         {
@@ -78,7 +80,8 @@ namespace MechaMariBot
             {
                 if (trigger.triggerUsers.Contains(socketMessage.Author.Id) || isTestServer)
                 {
-                    string[] words = socketMessage.Content.ToLower().Split(' ');
+                    string alphaNumOnlyText = keepOnlyAlphaNum.Replace(socketMessage.Content, " ");
+                    string[] words = alphaNumOnlyText.ToLower().Split(' ');
                     if (words.Intersect(trigger.triggerWords).Count() > 0)
                     {
                         var emote = Emote.Parse(trigger.reactionEmote);
